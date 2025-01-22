@@ -3,7 +3,7 @@
 ###############################################################################
 #                                check.sh                                     #
 ###############################################################################
-# USAGE: ./entrypoint.sh [<path>] [<fallback style>]
+# USAGE: ./check.sh [<path>] [<fallback style>]
 #
 # Checks all C/C++/Protobuf/CUDA files (.h, .H, .hpp, .hh, .h++, .hxx and .c,
 # .C, .cpp, .cc, .c++, .cxx, .proto, .cu) in the provided GitHub repository path
@@ -21,20 +21,14 @@ format_diff() {
 	local filepath="$1"
 	# Invoke clang-format with dry run and formatting error output
 	if [[ $CLANG_FORMAT_MAJOR_VERSION -gt "9" ]]; then
-		local_format="$(docker run \
-			--volume "$(pwd)":"$(pwd)" \
-			--workdir "$(pwd)" \
-			ghcr.io/jidicula/clang-format:"$CLANG_FORMAT_MAJOR_VERSION" \
+		local_format="$("clang-format-$CLANG_FORMAT_MAJOR_VERSION" \
 			--dry-run \
 			--Werror \
 			--style=file \
 			--fallback-style="$FALLBACK_STYLE" \
 			"${filepath}")"
 	else # Versions below 9 don't have dry run
-		formatted="$(docker run \
-			--volume "$(pwd)":"$(pwd)" \
-			--workdir "$(pwd)" \
-			ghcr.io/jidicula/clang-format:"$CLANG_FORMAT_MAJOR_VERSION" \
+		formatted="$("clang-format-$CLANG_FORMAT_MAJOR_VERSION" \
 			--style=file \
 			--fallback-style="$FALLBACK_STYLE" \
 			"${filepath}")"
@@ -76,7 +70,7 @@ fi
 if [[ -z $INCLUDE_REGEX ]]; then
 	INCLUDE_REGEX='^.*\.((((c|C)(c|pp|xx|\+\+)?$)|((h|H)h?(pp|xx|\+\+)?$))|(ino|pde|proto|cu))$'
 fi
-
+echo "in check.sh"
 cd "$GITHUB_WORKSPACE" || exit 2
 
 if [[ ! -d $CHECK_PATH ]]; then
@@ -88,18 +82,21 @@ fi
 exit_code=0
 
 # output clang-format version
-docker run \
-	--volume "$(pwd)":"$(pwd)" \
-	--workdir "$(pwd)" \
-	ghcr.io/jidicula/clang-format:"$CLANG_FORMAT_MAJOR_VERSION" --version
+"clang-format-$CLANG_FORMAT_MAJOR_VERSION" --version
 
 # All files improperly formatted will be printed to the output.
-src_files=$(find "$CHECK_PATH" -name .git -prune -o -regextype posix-egrep -regex "$INCLUDE_REGEX" -print)
+src_files=$(find \
+	"$CHECK_PATH" \
+	-name .git \
+	-prune \
+	-o \
+	-regextype posix-egrep \
+	-regex "$INCLUDE_REGEX" \
+	-print)
 
 # check formatting in each source file
 IFS=$'\n' # Loop below should separate on new lines, not spaces.
 for file in $src_files; do
-	# Only check formatting if the path doesn't match the regex
 	if ! [[ ${file} =~ $EXCLUDE_REGEX ]]; then
 		format_diff "${file}"
 	fi

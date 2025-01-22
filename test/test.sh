@@ -9,7 +9,7 @@ CLANG_FORMAT_VERSION="$1"
 ###############################################################################
 
 # should succeed
-"$GITHUB_WORKSPACE"/check.sh "$CLANG_FORMAT_VERSION" "$GITHUB_WORKSPACE/test/known_pass" "$FALLBACK_STYLE" "$EXCLUDE_REGEX"
+"$GITHUB_WORKSPACE"/wrapper.sh "$CLANG_FORMAT_VERSION" "$GITHUB_WORKSPACE/test/known_pass" "$FALLBACK_STYLE" "$EXCLUDE_REGEX"
 docker_status="$?"
 if [[ $docker_status != "0" ]]; then
 	echo "files that should succeed have failed!"
@@ -17,7 +17,7 @@ if [[ $docker_status != "0" ]]; then
 fi
 
 # should fail
-"$GITHUB_WORKSPACE"/check.sh "$CLANG_FORMAT_VERSION" "$GITHUB_WORKSPACE/test/known_fail" "$FALLBACK_STYLE" "$EXCLUDE_REGEX"
+"$GITHUB_WORKSPACE"/wrapper.sh "$CLANG_FORMAT_VERSION" "$GITHUB_WORKSPACE/test/known_fail" "$FALLBACK_STYLE" "$EXCLUDE_REGEX"
 docker_status="$?"
 if [[ $docker_status == "0" ]]; then
 	echo "files that should fail have succeeded!"
@@ -26,7 +26,7 @@ fi
 
 # load test on known_pass/addition.c copies
 
-"$GITHUB_WORKSPACE"/check.sh "$CLANG_FORMAT_VERSION" "$GITHUB_WORKSPACE/test/load_test" "$FALLBACK_STYLE" "$EXCLUDE_REGEX"
+"$GITHUB_WORKSPACE"/wrapper.sh "$CLANG_FORMAT_VERSION" "$GITHUB_WORKSPACE/test/load_test" "$FALLBACK_STYLE" "$EXCLUDE_REGEX"
 docker_status="$?"
 if [[ $docker_status != "0" ]]; then
 	echo "files that should succeed have failed in the loadtest!"
@@ -40,7 +40,7 @@ fi
 INCLUDE_REGEX='^.*\.(c|C)'
 
 # should succeed
-"$GITHUB_WORKSPACE"/check.sh "$CLANG_FORMAT_VERSION" "$GITHUB_WORKSPACE/test/known_pass" "$FALLBACK_STYLE" "$EXCLUDE_REGEX" "$INCLUDE_REGEX"
+"$GITHUB_WORKSPACE"/wrapper.sh "$CLANG_FORMAT_VERSION" "$GITHUB_WORKSPACE/test/known_pass" "$FALLBACK_STYLE" "$EXCLUDE_REGEX" "$INCLUDE_REGEX"
 docker_status="$?"
 if [[ $docker_status != "0" ]]; then
 	echo "files that should succeed have failed!"
@@ -48,7 +48,7 @@ if [[ $docker_status != "0" ]]; then
 fi
 
 # should fail
-"$GITHUB_WORKSPACE"/check.sh "$CLANG_FORMAT_VERSION" "$GITHUB_WORKSPACE/test/known_fail" "$FALLBACK_STYLE" "$EXCLUDE_REGEX" "$INCLUDE_REGEX"
+"$GITHUB_WORKSPACE"/wrapper.sh "$CLANG_FORMAT_VERSION" "$GITHUB_WORKSPACE/test/known_fail" "$FALLBACK_STYLE" "$EXCLUDE_REGEX" "$INCLUDE_REGEX"
 docker_status="$?"
 if [[ $docker_status == "0" ]]; then
 	echo "files that should fail have succeeded!"
