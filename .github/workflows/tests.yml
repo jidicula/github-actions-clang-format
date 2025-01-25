@@ -87,6 +87,7 @@ jobs:
           check-path: ${{ matrix.path['check'] }}
           clang-format-version: ${{ matrix.clang-format-version }}
           exclude-regex: ${{ matrix.path['exclude'] }}
+          format-filepath: 'test/format_files/clang_format_example'
       - name: Incorrect success on known-fail test
         if: ${{ steps.check.outcome == 'success' && matrix.path['known_fail'] }}
         run: exit 1

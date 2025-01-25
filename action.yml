@@ -26,12 +26,16 @@ inputs:
     description: 'A regex to override the C/C++/Protobuf/CUDA filetype regex. that should be checked. Default results in the regex defined in `check.sh`.'
     required: false
     default: ''
+  format-filepath:
+    description: 'A filepath to the clang_format file to override the default, which is `.clang_format` in the directory closest to the parent.'
+    required: false
+    default: ''
 
 runs:
   using: "composite"
   steps:
     - run: |
-        "${{ github.action_path }}/check.sh" "${{ inputs.clang-format-version }}" "${{ inputs.check-path }}" "${{ inputs.fallback-style }}" "${{ inputs.exclude-regex }}" "${{ inputs.include-regex }}"
+        "${{ github.action_path }}/check.sh" "${{ inputs.clang-format-version }}" "${{ inputs.check-path }}" "${{ inputs.fallback-style }}" "${{ inputs.exclude-regex }}" "${{ inputs.include-regex }}" "${{ inputs.format-filepath }}"
       shell: bash
     - name: Save PR head commit SHA
       if: failure() && github.event_name == 'pull_request'
