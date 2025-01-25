@@ -70,11 +70,12 @@ fi
 # Find all C/C++/Protobuf/CUDA files:
 #   h, H, hpp, hh, h++, hxx
 #   c, C, cpp, cc, c++, cxx
+#   ixx, cppm, ccm, c++m, cxxm
 #   ino, pde
 #   proto
 #   cu
 if [[ -z $INCLUDE_REGEX ]]; then
-	INCLUDE_REGEX='^.*\.((((c|C)(c|pp|xx|\+\+)?$)|((h|H)h?(pp|xx|\+\+)?$))|(ino|pde|proto|cu))$'
+	INCLUDE_REGEX='^.*\.((((c|C)(?!m)(c|pp|xx|\+\+)?m?$)|((h|H)h?(pp|xx|\+\+)?$))|(ixx)|(ino|pde|proto|cu))$'
 fi
 
 cd "$GITHUB_WORKSPACE" || exit 2
