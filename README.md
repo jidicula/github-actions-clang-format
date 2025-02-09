@@ -55,6 +55,8 @@ You can sponsor me [here](https://github.com/sponsors/jidicula)!
 * `include-regex` [optional]: A regex to include files or directories that should be checked.
   * Default: see [`INCLUDE_REGEX`](./check.sh#77)
   * Pattern matching is done with a POSIX `grep -E` extended regex, **not** a glob expression. You can exclude multiple patterns like this: `(hello|world)`. Build and verify your regex at [regex101.com](https://regex101.com) ([example](https://regex101.com/r/llFcLy/7)).
+* `format-filepath` [optional]: A filepath to the clang_format file to override the default, which is `.clang_format` file located in the closest parent directory of the input file.'
+    default: ''
 
 This action checks all C/C++/Protobuf (including Arduino `.ino` and `.pde`) files in the provided directory in the GitHub workspace are formatted correctly using `clang-format`. If no directory is provided or the provided path is not a directory in the GitHub workspace, all C/C++/Protobuf files are checked.
 

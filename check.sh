@@ -27,7 +27,7 @@ format_diff() {
 			ghcr.io/jidicula/clang-format:"$CLANG_FORMAT_MAJOR_VERSION" \
 			--dry-run \
 			--Werror \
-			--style=file \
+			--style=file"$FORMAT_FILEPATH" \
 			--fallback-style="$FALLBACK_STYLE" \
 			"${filepath}")"
 	else # Versions below 9 don't have dry run
@@ -35,7 +35,7 @@ format_diff() {
 			--volume "$(pwd)":"$(pwd)" \
 			--workdir "$(pwd)" \
 			ghcr.io/jidicula/clang-format:"$CLANG_FORMAT_MAJOR_VERSION" \
-			--style=file \
+			--style=file"$FORMAT_FILEPATH" \
 			--fallback-style="$FALLBACK_STYLE" \
 			"${filepath}")"
 		local_format="$(diff -q <(cat "${filepath}") <(echo "${formatted}"))"
@@ -60,6 +60,7 @@ CHECK_PATH="$2"
 FALLBACK_STYLE="$3"
 EXCLUDE_REGEX="$4"
 INCLUDE_REGEX="$5"
+FORMAT_FILEPATH="$6"
 
 # Set the regex to an empty string regex if nothing was provided
 if [[ -z $EXCLUDE_REGEX ]]; then
@@ -82,6 +83,14 @@ cd "$GITHUB_WORKSPACE" || exit 2
 if [[ ! -d $CHECK_PATH ]]; then
 	echo "Not a directory in the workspace, fallback to all files." >&2
 	CHECK_PATH="."
+fi
+
+if [[ -n $FORMAT_FILEPATH ]] && [[ ! -f $FORMAT_FILEPATH ]]; then
+	echo "Not a file in the workspace, fallback to search for .clang_format." >&2
+	FORMAT_FILEPATH=""
+elif [[ -n $FORMAT_FILEPATH ]]; then
+	# if being used, add the colon for seperating the syntax file:<file_name>
+	FORMAT_FILEPATH=":$FORMAT_FILEPATH"
 fi
 
 # initialize exit code
