@@ -76,6 +76,12 @@ The following file extensions are checked by default:
   * `.ino`
   * `.pde`
   * `.cu`
+* Module interface files:
+  * `.ixx`
+  * `.cppm`
+  * `.ccm`
+  * `.c++m`
+  * `.cxxm`
 * Protobuf files:
   * `.proto`
 
